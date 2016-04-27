@@ -4,150 +4,220 @@ import csv, re
 
 txt = open("out.xml", "w")
 txt.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>")
-txt.write("<rdf:RDF \n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\"> \n \n")
-
+txt.write("<rdf:RDF \n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" \n xmlns:dc=\"http://purl.org/dc/elements/1.1/\"> \n \n")
 
 txt.write("<skos:conceptScheme rdf:about=\"http://www.thesaurus.gc.ca/#CoreSubjectThesaurus\"></skos:conceptScheme>\n\n")
 
 
+txt.write("\n \n \n")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#InputFormat\"> \n")
+txt.write("<skos:prefLabel>Input format</skos:prefLabel></skos:concept>\n \n ")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#DropDownDataEN\"> \n")
+txt.write("<skos:prefLabel>Drop down data EN</skos:prefLabel></skos:concept> \n \n")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#DropDownDataFR\"> \n")
+txt.write("<skos:prefLabel>Drop down data FR</skos:prefLabel></skos:concept> \n \n")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#MetadataUsedFor\"> \n")
+txt.write("<skos:prefLabel>Metadata used for</skos:prefLabel></skos:concept> \n \n ")
+
+
+txt.write("\n \n \n")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#UsedByCPNO\"> \n")
+txt.write("<skos:prefLabel>Metadata used by CPNO</skos:prefLabel></skos:concept> \n \n ")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#UsedByeSchool\"> \n")
+txt.write("<skos:prefLabel>Metadata used by eSchool</skos:prefLabel></skos:concept> \n \n ")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#UsedByDesign\"> \n")
+txt.write("<skos:prefLabel>Metadata used by Design</skos:prefLabel></skos:concept> \n \n ")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#UsedByOST\"> \n")
+txt.write("<skos:prefLabel>Metadata used by OST</skos:prefLabel></skos:concept> \n \n ")
+
+
+txt.write("\n \n \n")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#AddedProtegeWhen\"> \n")
+txt.write("<skos:prefLabel>Metadata added to protege on the date</skos:prefLabel></skos:concept> \n \n ")
+
+txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/#MetadataReference\"> \n")
+txt.write("<skos:prefLabel>Metadata reference</skos:prefLabel></skos:concept> \n \n ")
+
+txt.write("\n \n \n")
 
 with open('data.csv', newline='\n', encoding='utf-8-sig') as q:
-	reader = csv.reader(q)
+    reader = csv.reader(q)
 
-	formatList = []
-	enPossibleList = []
-	frPossibleList = []
-	metadataList = []
+    formatList = []
+    enPossibleList = []
+    frPossibleList = []
+    metadataList = []
 
-	for row in reader:
-		j = 0
-		for item in row:
-			amp = re.sub(r'&', "and", item).strip()
+    for row in reader:
+        j = 0
 
-			
-			if j == 2:  #FORMAT
+        for col in row:
+            #col = re.sub(r'&', "and", col).strip()
 
-				if amp not in formatList:
-					formatList.append(amp)
-					txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+amp+"\">")
-					txt.write("<skos:prefLabel>"+amp+" </skos:prefLabel> </skos:concept>")
+            
+            if j == 2:  #FORMAT
 
-			elif j == 3: #DROP DOWN OPTIONS EN
-				#FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
-				if amp not in enPossibleList :
-					enPossibleList.append(amp)
-					txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+amp+"\">")
-					txt.write("<skos:prefLabel>"+amp+" </skos:prefLabel> </skos:concept>")
-				
+                col = re.sub(r'&', "and", col).strip()
+                listText = col.replace(" ","")
+                webText = col.replace(" ","%20")
+                displayText = col
+                if (listText and not listText.isspace()) and (listText not in formatList):
+                    formatList.append(listText)
+                    txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+webText+"\"> \n"+
+                                "<skos:prefLabel>"+displayText+" </skos:prefLabel> \n"+
+                                "<skos:hasTopConcept  rdf:resource=\"http://www.thesaurus.gc.ca/concept/#InputFormat\"/> \n"+
+                                "</skos:concept> \n\n")
+            elif j == 3: #DROP DOWN OPTIONS EN
+                #FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
+                lines = col.splitlines(True)
+            
+                for item in lines:
+                    item = re.sub(r'&', "and", item).strip()
+                    listText = item.replace(" ","")
+                    webText = item.replace(" ","%20")
+                    displayText = item
+                    if (listText and not listText.isspace()) and (listText not in enPossibleList):
+                        enPossibleList.append(listText)
+                        txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+webText+"\"> \n"+
+                                "<skos:prefLabel>"+displayText+" </skos:prefLabel> \n"+
+                                "<skos:hasTopConcept  rdf:resource=\"http://www.thesaurus.gc.ca/concept/#DropDownDataEN\"/> \n"+
+                                "</skos:concept> \n\n")
 
-				#FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
+                #FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
 
-			elif j == 4:  #DROP DOWN OPTIONS FR
-				#FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
-				if amp not in frPossibleList :
-					frPossibleList.append(amp)
-					txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+amp+"\">")
-					txt.write("<skos:prefLabel>"+amp+" </skos:prefLabel> </skos:concept>")
-				
-			elif j == 9:	#METADATA
-				#FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
-				if amp not in metadataList :
-					metadataList.append(amp)
-					txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+amp+"\">")
-					txt.write("<skos:prefLabel>"+amp+" </skos:prefLabel> </skos:concept>")
-				
+            elif j == 4:  #DROP DOWN OPTIONS FR
+                #FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
 
-			else:
-				#do nothing
+                lines = col.splitlines(True)
+                for item in lines:
+                    item = re.sub(r'&', "and", item).strip()
+                    listText = item.replace(" ","")
+                    webText = item.replace(" ","%20")
+                    displayText = item
+                    if (listText and not listText.isspace()) and (listText not in frPossibleList):
+                        frPossibleList.append(listText)
+                        txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+webText+"\"> \n"+
+                                "<skos:prefLabel>"+displayText+" </skos:prefLabel> \n"+
+                                "<skos:hasTopConcept  rdf:resource=\"http://www.thesaurus.gc.ca/concept/#DropDownDataFR\"/> \n"+
+                                "</skos:concept> \n\n")
 
-				j = j + 1
+            elif j == 9:    #METADATA
+                #FOR EACH NEW LINE SEPERATED VALUE IN AMP .....
 
+                lines = col.splitlines(True)
+                for item in lines:
+                    item = re.sub(r'&', "and", item).strip()
+                    listText = item.replace(" ","")
+                    webText = item.replace(" ","%20")
+                    displayText = item
+                    if (listText and not listText.isspace()) and (listText not in metadataList):
+                        metadataList.append(listText)
+                        txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+webText+"\"> \n"+
+                                "<skos:prefLabel>"+displayText+" </skos:prefLabel> \n"+
+                                "<skos:hasTopConcept  rdf:resource=\"http://www.thesaurus.gc.ca/concept/#MetadataUsedFor\"/> \n"+
+                                "</skos:concept> \n\n")
 
+                    
+
+            else:
+                #do nothing
+                pass
+
+        
+            j = j + 1
+
+print(formatList)
 txt.write("\n \n END OF format / drop down options / metadata \n \n ")
 
 
 with open('data.csv', newline='\n', encoding='utf-8-sig') as f:
-	reader = csv.reader(f)
-	for row in reader:
+    reader = csv.reader(f)
+    for row in reader:
 
-		txt.write("<skos:Concept>")
+        txt.write("<skos:Concept>")
 
-		i = 0
-		for item in row:
-			
-			amp = re.sub(r'&', "and", item).strip()
+        i = 0
+        for item in row:
+            
+            amp = re.sub(r'&', "and", item).strip()
 
-			if i == 0:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print(aeiou+"\n")
-				txt.write(aeiou+"\n")
-			
-			elif i == 1:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("<skos:prefLabel xml:lang=\"fr\">"+aeiou+"</skos:prefLabel>\n")
-				txt.write("<skos:prefLabel xml:lang=\"fr\">"+aeiou+"</skos:prefLabel>\n")
-			
-			elif i == 2:
-				#REFERENCE VALUES CREATED IN 1ST SECTION
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("<skos:note>"+aeiou+"</skos:note>\n")
-				txt.write("<skos:note>"+aeiou+"</skos:note>\n")
+            if i == 0:
+             if amp:
+                txt.write("<skos:prefLabel xml:lang=\"en\">"+amp+"</skos:prefLabel>\n")
+            
+            elif i == 1: 
+             if amp:
+                txt.write("<skos:prefLabel xml:lang=\"fr\">"+amp+"</skos:prefLabel>\n")
+            
+            elif i == 2: 
+             if amp:
+                amp = amp.replace(" ","%20")
+                txt.write("<skos:hasTopConcept rdf:resource= \"http://www.thesaurus.gc.ca/concept/#"+amp+"\"/> \n")
 
-			elif i == 3:
-				#REFERENCE VALUES CREATED IN 1ST SECTION
-					break
+            elif i == 3:
+                lines = amp.splitlines(True)
+                for item in lines:
+                    if item:
+                        item = item.replace(" ","%20").strip()
+                        txt.write("<skos:narrower rdf:resource= \"http://www.thesaurus.gc.ca/concept/#"+item+"\"/> \n")
 
-			elif i == 4:
-				#REFERENCE VALUES CREATED IN 1ST SECTION
-					break
-			
-			elif i == 5:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("	CPNO USED:  "+aeiou+"\n")
-				txt.write("	CPNO USED:  "+aeiou+"\n")
-			
-			elif i == 6:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("	eSchool USED:  "+aeiou+"\n")
-				txt.write("	eSchool USED:  "+aeiou+"\n")
-			
-			elif i == 7:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("	Design USED:  "+aeiou+"\n")
-				txt.write("	Design USED:  "+aeiou+"\n")
-			
-			elif i == 8:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("	OST USED:  "+aeiou+"\n")
-				txt.write("	OST USED:  "+aeiou+"\n")
-			
-			elif i == 9:
-				#REFERENCE VALUES CREATED IN 1ST SECTION
-				break
+            elif i == 4:
+                lines = amp.splitlines(True)
+                for item in lines:
+                    if item:
+                        item = item.replace(" ","%20").strip()
+                        txt.write("<skos:narrower rdf:resource= \"http://www.thesaurus.gc.ca/concept/#"+item+"\"/> \n")
+                
+            elif i == 5:
+             if amp:
+                txt.write("<dc:isRequiredBy rdf:resource = \"http://www.thesaurus.gc.ca/concept/#UsedByCPNO\"/>\n")
+            
+            elif i == 6:
+             if amp:
+                txt.write("<dc:isRequiredBy rdf:resource = \"http://www.thesaurus.gc.ca/concept/#UsedByeSchool\"/>\n")
+            
+            elif i == 7:
+             if amp:
+                txt.write("<dc:isRequiredBy rdf:resource = \"http://www.thesaurus.gc.ca/concept/#UsedByDesign\"/>\n")
+            
+            elif i == 8:
+             if amp:
+                txt.write("<dc:isRequiredBy rdf:resource = \"http://www.thesaurus.gc.ca/concept/#UsedByOST\"/>\n")
+            
+            elif i == 9:
+                lines = amp.splitlines(True)
+                for item in lines:
+                    if item:
+                        item = item.replace(" ","%20").strip()
+                        txt.write("<skos:related rdf:resource= \"http://www.thesaurus.gc.ca/concept/#"+item+"\"/> \n")
 
-			elif i == 10:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("	Added to protege:  "+aeiou+"\n")
-				txt.write("	Added to protege:  "+aeiou+"\n")
-			
-			elif i == 11:
-				aeiou = re.sub(r'\n', " ", amp).strip()
-				print("	Reference:  "+aeiou+"\n")
-				txt.write("	Reference:  "+aeiou+"\n")
-			
-			else:
-				print("ERR OUT OF RANGE")
-				break
+            elif i == 10:
+             if amp:
+                txt.write("<dc:date>"+amp+"</dc:date>\n")
+            
+            elif i == 11:
+             if amp:
+                amp.replace(" ","%20")
+                txt.write("<skos:exactmatch rdf:resource=\""+amp+"\"/>\n")
+            
+            else:
+                pass
 
-			i = i + 1
+            i = i + 1
 
-		print("\n\n")
-		txt.write("\n")
-
-		txt.write("</skos:Concept>")
+        txt.write("</skos:Concept>")
 
 
-		txt.write("\n\n")
+        txt.write("\n\n")
 
 txt.write("</rdf:RDF>") 
 txt.close()
