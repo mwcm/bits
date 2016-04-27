@@ -17,7 +17,7 @@ try:
             raise Exception('Invalid Input Format', 'Please try again with a valid CSV file')
 
         if not outfile.lower().endswith('.xml'):
-            raise Exception('Invalid Output Format', 'Please try again with a valid XML file')
+            raise Exception('Invalid Output Format', 'Please try again with a valid XML file extension')
 
         if os.stat(infile).st_size == 0:
             raise Exception('Empty Input File', 'Please try again with a valid input CSV.')
@@ -160,13 +160,12 @@ try:
             
                 j = j + 1
 
-    print(formatList)
     txt.write("\n \n END OF format / drop down options / metadata \n \n ")
 
 
     with open(infile, newline='\n', encoding='utf-8-sig') as f:
         reader = csv.reader(f)
-        for row in reader:
+        for row in reader(f, 1, None):
 
             txt.write("<skos:Concept>")
 
