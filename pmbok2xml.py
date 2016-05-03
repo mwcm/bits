@@ -3,7 +3,7 @@
 #April 29 2016
 # -*- coding: utf-8 -*-
 
-import csv, re, sys, os
+import re, sys, os
 
 #try, except block used to catch missing file paths
 try:
@@ -26,15 +26,17 @@ try:
 
        txt.write("\n \n \n")
 
-       content = f.readlines()
+       content = str(f.readlines())
 
+
+       content = content.rpartition('</Styles>')[-1]
 
        titleList = []
        defList = []
 
 
 
-       for row in reader[1:]:
+       for line in content:
             j=0
 
 
