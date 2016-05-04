@@ -213,7 +213,7 @@ try:
         for row in reader[1:]:
 
             #beginning of concept
-            txt.write("<skos:Concept>")
+            txt.write("<skos:Concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+row[0].replace(" ","%20").strip()+"\">\n")
 
             i = 0
             #for each cell in a row
@@ -225,18 +225,18 @@ try:
                 if i == 0:
                     #create English prefLabel if it exists
                  if amp:
-                    txt.write("<skos:prefLabel xml:lang=\"en\">"+amp+"</skos:prefLabel>\n")
+                    txt.write("<skos:prefLabel xml:lang=\"en\">"+amp.strip()+"</skos:prefLabel>\n")
                 
                 elif i == 1: 
                     #create French preflabel if it exists
                  if amp:
-                    txt.write("<skos:prefLabel xml:lang=\"fr\">"+amp+"</skos:prefLabel>\n")
+                    txt.write("<skos:prefLabel xml:lang=\"fr\">"+amp.strip()+"</skos:prefLabel>\n")
                 
                 elif i == 2: 
                     #create reference to Format of the concept if it has one
                  if amp:
                     amp = amp.replace(" ","%20")
-                    txt.write("<skos:hasTopConcept rdf:resource= \"http://www.thesaurus.gc.ca/concept/#"+amp+"\"/> \n")
+                    txt.write("<skos:hasTopConcept rdf:resource= \"http://www.thesaurus.gc.ca/concept/#"+amp.strip()+"\"/> \n")
 
                 elif i == 3:
                     #create references to the concepts EN drop down options if they exist
