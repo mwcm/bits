@@ -28,31 +28,72 @@ try:
 
        content = str(f.readlines())
 
-
        content = content.rpartition('</Styles>')[-1]
-
-       titleList = []
-       defList = []
+       content = content.rpartition('</Table>')[0]
 
 
+       titles = []
+       definitions = []
+       count = 0
 
-       for line in content:
-            j=0
 
+       for item in content.split("</Cell>"):
 
-            for col in row:
-                #if j == whatever
-                #CHECK and add record definition & title to lists
-                #tell what a cell contains by <b> text tag
-                #MAKE SURE TO ACCOUNT FOR SPLIT DEFINITIONS
-                #txt.write(<skos:concept......)
-                txt.write("<skos:Concept>")
-                amp = re.sub(r'&', "and", item).strip() 
+            if '<Cell ss:StyleID=\"s19\"/>' in item:
+              count = count + 1
+            if "<B>" in item:
+                t = item [ item.find("<B>")+len("<B>") : ]
+                d = t.rpartition("</B>")[-1]
+                t = t.split("</B>")[0]
+                
+                
+                if '<Cell ss:StyleID=\"s19\"/>' in item:
+                   count = count + 1
 
+                if ("Glossary" not in str(t)) and ("Glossaire" not in str(t)):
+                    t = t.split("</Font>")[0]
+                    t = t.split("<Font html:Size=\"12\">")
+                    t = "".join(t)
+                    t = t.replace("   ","  ").replace("  ", " ").replace(".","").replace("\\","").strip()
+                    titles.append(t)
+
+                d = d.split("html:Size=\"12\">",1)[-1]
+                d = re.sub('<[^>]+>', '', d)
+                d = d.replace("   ","  ").replace("  ", " ").replace("\\","").strip()
+
+                if d:
+                  definitions.append(d)
+
+            else:
+              count = count + 1
+              ud = item
+              ud = ud.split("REC-html40\">",1)[-1]
+
+              ud = re.sub('<[^>]+>', '', ud)
+              ud = ud.replace("   ","  ").replace("  ", " ").replace("\\","").strip()
+              
+              if(ud != "rn\', \' rn\', \'"):
+                if count % 2 == 0 :
+                  cd = definitions[-1]
+                  definitions[-1] = cd + ud
+                 # print(cd + ud +"\n")
+                else:
+                  cd = definitions[-2]
+                  definitions[-2] = cd + ud
+                 # print(cd + ud +"\n")
+
+   
+    c = 0
+    for item in titles:
+      txt.write("<skos:concept rdf:about=\"http://www.thesaurus.gc.ca/concept/#"+titles[c].replace(" ","%20")+"\"> \n"+
+                              "<skos:prefLabel>"+titles[c]+" </skos:prefLabel> \n"+
+                              "<skos:definition>"+definitions[c]+"</skos:definition> \n"+
+                              "</skos:concept> \n\n")
+      c = c +1 
 
     txt.write("</rdf:RDF>")
     txt.close()
-
-#end of try at file start, used to fail gracefully if input/output file paths are not specified
+ 
+ #end of try at file start, used to fail gracefully if input/output file paths are not specified
 except IndexError:
     print ("Oops! Missing valid input or output file! Please try again with format: \n      python test.py <input csv file here> <output xml file here>")
