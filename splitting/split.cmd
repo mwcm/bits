@@ -1,0 +1,1 @@
+C:\Users\mmitchel\programs\msxsl.exe C:\Users\mmitchel\projects\splitting\DB\CSPS_withLRMI.xml C:\Users\mmitchel\projects\splitting\split\split.xsl -o merged.htmlC:\Users\mmitchel\projects\splitting>java -jar ./saxon/saxon9he.jar ./DB/CSPS_withLRMI.xml ./split/split.xsl -o:./concepts/o.xml
